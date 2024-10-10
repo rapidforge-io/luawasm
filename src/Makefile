@@ -6,7 +6,7 @@
 # Your platform. See PLATS for possible values.
 PLAT= guess
 WASI_SDK_PATH=/Users/caneldem/wasi
-CC= $(WASI_SDK_PATH)/bin/clang --target=wasm32-unknown-wasi --sysroot=$(WASI_SDK_PATH)/share/wasi-sysroot
+CC= $(WASI_SDK_PATH)/bin/clang --std=gnu99 --target=wasm32-unknown-wasi --sysroot=$(WASI_SDK_PATH)/share/wasi-sysroot
 CFLAGS= -O2 -Wall -Wextra -DLUA_COMPAT_5_3 $(SYSCFLAGS) $(MYCFLAGS)
 LDFLAGS= $(SYSLDFLAGS) $(MYLDFLAGS)
 LIBS= -lm $(SYSLIBS) $(MYLIBS)
@@ -15,8 +15,10 @@ LIBS= -lm $(SYSLIBS) $(MYLIBS)
 # AR= $(WASI_SDK_PATH)/bin/llvm-ar rcu
 # RANLIB= $(WASI_SDK_PATH)/bin/llvm-ranlib
 
-AR= ar rcu
-RANLIB= ranlib
+# AR= ar rcu
+AR= $(WASI_SDK_PATH)/bin/llvm-ar rcu
+# RANLIB= ranlib
+RANLIB= $(WASI_SDK_PATH)/bin/llvm-ranlib
 RM= rm -f
 UNAME= uname
 
@@ -24,7 +26,7 @@ SYSCFLAGS=
 SYSLDFLAGS=
 SYSLIBS=
 
-MYCFLAGS= -DLUA_USE_WASI -D_WASI_EMULATED_SIGNAL -mllvm -wasm-enable-sjlj -D_WASI_EMULATED_PROCESS_CLOCKS
+MYCFLAGS= -DLUA_USE_WASI -D_WASI_EMULATED_SIGNAL -mllvm -wasm-enable-sjlj -D_WASI_EMULATED_PROCESS_CLOCKS  -Wl,--no-entry -Wl,--export-all
 MYLDFLAGS= -lwasi-emulated-signal -lwasi-emulated-process-clocks
 YLIBS=
 MYOBJS=
