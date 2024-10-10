@@ -22,6 +22,37 @@
 #include "lualib.h"
 
 
+#if defined(LUA_USE_WASI)
+#include <wasi/api.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <string.h>
+#include <time.h>
+
+#undef LUA_TMPNAMBUFSIZE
+#undef L_tmpnam
+#undef lua_tmpnam
+
+#define LUA_TMPNAMBUFSIZE 32
+#define L_tmpnam LUA_TMPNAMBUFSIZE
+
+
+static int lua_tmpnam(char *buffer, size_t buffersize) {
+  // Ensure the buffer is large enough for the generated filename
+  if (buffersize < LUA_TMPNAMBUFSIZE) {
+    return -1;  // Buffer is too small
+  }
+
+  // Create a pseudo-random filename
+  unsigned int seed = (unsigned int)time(NULL);
+  snprintf(buffer, buffersize, "/lua_tmp_%u", seed);
+
+  return 0;
+}
+#endif
+
+
 /*
 ** {==================================================================
 ** List of valid conversion specifiers for the 'strftime' function;
@@ -169,7 +200,8 @@ static int os_rename (lua_State *L) {
 
 
 static int os_tmpname (lua_State *L) {
-  char buff[LUA_TMPNAMBUFSIZE];
+  // char buff[LUA_TMPNAMBUFSIZE];
+  char buff[32];
   int err;
   lua_tmpnam(buff, err);
   if (l_unlikely(err))

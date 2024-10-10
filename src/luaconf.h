@@ -43,7 +43,10 @@
 */
 /* #define LUA_USE_C89 */
 
-
+#if defined(LUA_USE_WASI)
+#define LUA_TMPNAMBUFSIZE 32
+#define L_tmpnam LUA_TMPNAMBUFSIZE
+#endif
 /*
 ** By default, Lua on Windows use (some) specific Windows features
 */

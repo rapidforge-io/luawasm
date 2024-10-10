@@ -5,11 +5,15 @@
 
 # Your platform. See PLATS for possible values.
 PLAT= guess
-
-CC= gcc -std=gnu99
+WASI_SDK_PATH=/Users/caneldem/wasi
+CC= $(WASI_SDK_PATH)/bin/clang --target=wasm32-unknown-wasi --sysroot=$(WASI_SDK_PATH)/share/wasi-sysroot
 CFLAGS= -O2 -Wall -Wextra -DLUA_COMPAT_5_3 $(SYSCFLAGS) $(MYCFLAGS)
 LDFLAGS= $(SYSLDFLAGS) $(MYLDFLAGS)
 LIBS= -lm $(SYSLIBS) $(MYLIBS)
+
+# LD= $(WASI_SDK_PATH)/bin/wasm-ld rcu
+# AR= $(WASI_SDK_PATH)/bin/llvm-ar rcu
+# RANLIB= $(WASI_SDK_PATH)/bin/llvm-ranlib
 
 AR= ar rcu
 RANLIB= ranlib
@@ -20,13 +24,13 @@ SYSCFLAGS=
 SYSLDFLAGS=
 SYSLIBS=
 
-MYCFLAGS=
-MYLDFLAGS=
-MYLIBS=
+MYCFLAGS= -DLUA_USE_WASI -D_WASI_EMULATED_SIGNAL -mllvm -wasm-enable-sjlj -D_WASI_EMULATED_PROCESS_CLOCKS
+MYLDFLAGS= -lwasi-emulated-signal -lwasi-emulated-process-clocks
+YLIBS=
 MYOBJS=
 
 # Special flags for compiler modules; -Os reduces code size.
-CMCFLAGS= 
+CMCFLAGS=
 
 # == END OF USER SETTINGS -- NO NEED TO CHANGE ANYTHING BELOW THIS LINE =======
 
