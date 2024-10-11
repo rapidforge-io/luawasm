@@ -5,14 +5,17 @@
 
 # Your platform. See PLATS for possible values.
 PLAT= guess
-
-CC= gcc -std=gnu99
-CFLAGS= -O2 -Wall -Wextra -DLUA_COMPAT_5_3 $(SYSCFLAGS) $(MYCFLAGS)
+CC= emcc -O0 -s WASM=1 -s ERROR_ON_UNDEFINED_SYMBOLS=0 \
+    -s EXPORTED_FUNCTIONS="['_main']" \
+    -s EXPORTED_RUNTIME_METHODS=['ccall','cwrap']
+    -s EXIT_RUNTIME=0
+# CC= emcc -O0 -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s ERROR_ON_UNDEFINED_SYMBOLS=0 -s EXPORTED_FUNCTIONS=['_main']
+CFLAGS= -Wall -Wextra -DLUA_COMPAT_5_3 $(SYSCFLAGS) $(MYCFLAGS)
 LDFLAGS= $(SYSLDFLAGS) $(MYLDFLAGS)
 LIBS= -lm $(SYSLIBS) $(MYLIBS)
 
-AR= ar rcu
-RANLIB= ranlib
+AR= emar rcu
+RANLIB= emranlib
 RM= rm -f
 UNAME= uname
 
@@ -26,7 +29,7 @@ MYLIBS=
 MYOBJS=
 
 # Special flags for compiler modules; -Os reduces code size.
-CMCFLAGS= 
+CMCFLAGS=
 
 # == END OF USER SETTINGS -- NO NEED TO CHANGE ANYTHING BELOW THIS LINE =======
 
@@ -70,7 +73,7 @@ test:
 	./$(LUA_T) -v
 
 clean:
-	$(RM) $(ALL_T) $(ALL_O)
+	$(RM) $(ALL_T) $(ALL_O) *.wasm
 
 depend:
 	@$(CC) $(CFLAGS) -MM l*.c
