@@ -2,14 +2,13 @@
 # See ../doc/readme.html for installation and customization instructions.
 
 # == CHANGE THE SETTINGS BELOW TO SUIT YOUR ENVIRONMENT =======================
-
+#wasi-sdk
 # Your platform. See PLATS for possible values.
 PLAT= guess
 CC= emcc -O0 -s WASM=1 -s ERROR_ON_UNDEFINED_SYMBOLS=0 \
     -s EXPORTED_FUNCTIONS="['_main']" \
     -s EXPORTED_RUNTIME_METHODS=['ccall','cwrap']
     -s EXIT_RUNTIME=0
-# CC= emcc -O0 -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s ERROR_ON_UNDEFINED_SYMBOLS=0 -s EXPORTED_FUNCTIONS=['_main']
 CFLAGS= -Wall -Wextra -DLUA_COMPAT_5_3 $(SYSCFLAGS) $(MYCFLAGS)
 LDFLAGS= $(SYSLDFLAGS) $(MYLDFLAGS)
 LIBS= -lm $(SYSLIBS) $(MYLIBS)
